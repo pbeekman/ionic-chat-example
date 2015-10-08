@@ -9,3 +9,8 @@ h2 {
 .chatMessage {
 	width: 73%;
 }
+
+.item p {
+	overflow: visible;
+	white-space: normal;
+}
