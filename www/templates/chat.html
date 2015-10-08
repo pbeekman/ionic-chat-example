@@ -1,0 +1,17 @@
+<ion-view view-title="Chat als {{userName}}">
+	<ion-content scroll="true" padding="false">
+		<ion-list class="list">
+			<ion-item ng-repeat="message in messages | orderBy: 'timestamp':false">
+				<h2>{{message.user}}</h2>
+      			<p>{{message.message}}</p>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+	<ion-footer-bar class="footerForm">
+        <label class="item item-input chatMessage">
+            <input type="text" placeholder="Je bericht" ng-model="data.chatMessage">
+        </label>
+        
+        <button class="button button-positive sendMessageBtn icon-right ion-chevron-right pull-right" ng-click="sendMessage()">Verzenden</button>
+	</ion-footer-bar>
+</ion-view>
