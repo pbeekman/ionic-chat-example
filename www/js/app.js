@@ -39,13 +39,32 @@ ionicnlchatdemo.config(function($stateProvider, $urlRouterProvider) {
 });
 
 
-ionicnlchatdemo.controller('loginController', ['$scope', '$state', '$ionicPopup', function($scope, $state, $ionicPopup) {
+ionicnlchatdemo.controller('loginController', ['$scope', '$rootScope', '$state', '$ionicPopup', function($scope, $rootScope, $state, $ionicPopup) {
 	// Create the scope.data
 	$scope.data = {};
+	$scope.data.userImage = '';
+
+	// Google Login
+	$scope.googleLogin = function() {
+		var ref = new Firebase('https://<YOUR FIREBASE ID>.firebaseio.com');
+		ref.authWithOAuthPopup("google", function(error, authData) {
+		  	if (error) {
+		    	alert("Login Failed!", error);
+		  	}
+		  	else {
+		    	$scope.$apply(function(){$scope.data.userName = authData.google.displayName});
+		    	$scope.$apply(function(){$scope.data.userImage = authData.google.profileImageURL});	
+		  	}
+		});
+	}
 
 	// When the 'chat' button is clicked, check if username is not empty
 	$scope.startChat = function() {
 		if($scope.data.userName != '' && $scope.data.userName !== undefined) {
+			$rootScope.userProperties = {};
+			$rootScope.userProperties.userName = $scope.data.userName;
+			$rootScope.userProperties.userImage = $scope.data.userImage;
+
 			$state.go('chatpage', {userName: $scope.data.userName})
 		}
 		else {
@@ -57,11 +76,11 @@ ionicnlchatdemo.controller('loginController', ['$scope', '$state', '$ionicPopup'
 	}
 }]);
 
-ionicnlchatdemo.controller('chatController', ['$scope', '$state', '$stateParams', '$firebaseArray', '$ionicScrollDelegate',  function($scope, $state, $stateParams, $firebaseArray, $ionicScrollDelegate) {
+ionicnlchatdemo.controller('chatController', ['$scope', '$rootScope', '$state', '$stateParams', '$firebaseArray', '$ionicScrollDelegate',  function($scope, $rootScope, $state, $stateParams, $firebaseArray, $ionicScrollDelegate) {
     
-	$scope.userName = $stateParams.userName;
+	$scope.userName = $rootScope.userProperties.userName;
 
-    var ref = new Firebase('https://ionicnl-chat-demo.firebaseio.com/messages');
+    var ref = new Firebase('https://<YOUR FIREBASE ID>.firebaseio.com/messages');
     $scope.messages = $firebaseArray(ref);
  	
  	// Watch the updates. When a new message is posted, scroll to bottom
@@ -77,7 +96,8 @@ ionicnlchatdemo.controller('chatController', ['$scope', '$state', '$stateParams'
     	$scope.messages.$add({
         'user': $scope.userName,
         'message' : $scope.data.chatMessage,
-        'timestamp' : timestamp
+        'timestamp' : timestamp,
+        'profilePic' : $rootScope.userProperties.userImage
       });
 
     	// Empty the message bar after sending the message

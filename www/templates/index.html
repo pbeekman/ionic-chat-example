@@ -1,13 +1,17 @@
 <ion-view view-title="Ionic + Firebase chat" class="bar-stable">
     <ion-content scroll="false" padding="true">
+        <button class="button button-block button-positive" ng-click="googleLogin()">
+               Login met je Google account
+        </button>
         <form ng-submit="startChat()">
             <div class="list list-inset">
                 <label class="item item-input">
                     <input type="text" placeholder="Voer je naam in" ng-model="data.userName">
                 </label>
+                <input type="hidden" ng-model="data.userImage">
             </div>
             <button class="button button-block button-positive">
-               Go chat!
+               Start met chatten
             </button>
         </form>
     </ion-content>
